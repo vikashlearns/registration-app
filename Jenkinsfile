@@ -1,13 +1,13 @@
 pipeline {
-    agent { label 'Jenkins-Agent' }  // ✅ Correct agent syntax
+    agent { label 'Jenkins-Agent' }
 
     tools {
-        jdk 'Java17'   // ✅ Ensure Java17 is correctly configured in Jenkins
-        maven 'Maven3'  // ✅ Ensure Maven3 is correctly configured in Jenkins
+        jdk 'Java17'
+        maven 'Maven3'
     }
 
-    stages {  // ✅ Fixed: 'stages' block should not take a parameter
-        stage('Cleanup Workspace') {  // ✅ Correct syntax for defining a stage
+    stages {
+        stage('Cleanup Workspace') {
             steps {
                 cleanWs()
             }
@@ -15,8 +15,8 @@ pipeline {
 
         stage('Checkout from SCM') {
             steps {
-                git branch: 'main', 
-                    credentialsId: 'github', 
+                git branch: 'main',
+                    credentialsId: 'github',
                     url: 'https://github.com/V000ik/registration-app.git'
             }
         }
@@ -32,7 +32,8 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage("SonarQube Analysis"){
+
+        stage("SonarQube Analysis") {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
@@ -41,6 +42,5 @@ pipeline {
                 }
             }
         }
-    }
     }
 }
