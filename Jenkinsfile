@@ -10,7 +10,7 @@ pipeline {
         APP_NAME = "register-app-pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "v000ik"
-        DOCKER_PASS = "dockerhub" // This should be Jenkins credentials ID, not actual password
+        DOCKER_PASS = "dockerhub" // Use Jenkins credentials ID
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
@@ -65,4 +65,12 @@ pipeline {
                     def imageName = "${DOCKER_USER}/${APP_NAME}"
                     def dockerImage = docker.build("${imageName}:${IMAGE_TAG}")
 
-                    docker.withRegistry('',
+                    docker.withRegistry('', DOCKER_PASS) {
+                        dockerImage.push("${IMAGE_TAG}")
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+    }
+}
