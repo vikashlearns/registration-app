@@ -6,6 +6,14 @@ pipeline {
         maven 'Maven3'
     }
 
+    environment {
+        APP_NAME = "register-app-pipeline"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "v000ik"
+        DOCKER_PASS = "dockerhub" // This should be Jenkins credentials ID, not actual password
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+    }
+
     stages {
         stage('Cleanup Workspace') {
             steps {
@@ -50,5 +58,11 @@ pipeline {
                 }
             }
         }
-    }
-}
+
+        stage("Build & Push Docker Image") {
+            steps {
+                script {
+                    def imageName = "${DOCKER_USER}/${APP_NAME}"
+                    def dockerImage = docker.build("${imageName}:${IMAGE_TAG}")
+
+                    docker.withRegistry('',
